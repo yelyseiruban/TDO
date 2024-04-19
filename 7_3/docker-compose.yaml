@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: traefik:v2.3
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/traefik.yml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.api.service=api@internal"
+
+  flask-app:
+    build: ./flask-app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flask-app.rule=PathPrefix(`/api/flask`)"
+      - "traefik.http.routers.flask-app.entrypoints=web"
+      - "traefik.http.services.flask-app.loadbalancer.server.port=5000"
+    networks:
+      - web
+
+  express-app:
+    build: ./express-app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.express-app.rule=PathPrefix(`/api/express`)"
+      - "traefik.http.routers.express-app.entrypoints=web"
+      - "traefik.http.services.express-app.loadbalancer.server.port=3000"
+    networks:
+      - web
+
+networks:
+  web:
+    name: web
