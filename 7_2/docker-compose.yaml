@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: nginx
+    networks:
+      - frontend_network
+    ports:
+      - "80:80"
+
+  backend:
+    build: /Volumes/External\ Samsung/uni/devops/7_2/back
+    networks:
+      - frontend_network
+      - backend_network
+    ports:
+      - "3000:3000"
+
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: db
+    networks:
+      - backend_network
+
+
+networks:
+  frontend_network:
+    driver: bridge
+  backend_network:
+    driver: bridge
