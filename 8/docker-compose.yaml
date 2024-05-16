@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:11.5-alpine
+    container_name: postgres-container
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+      - ./db/init-script.sql:/docker-entrypoint-initdb.d/init-script.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: task6
+      DB_HOST: postgres
+      DB_PORT: 5432
+    networks:
+      - task8
+  api:
+    build: ./api
+    container_name: api-container
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: curl -fs http://localhost:3000/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: task6
+    networks:
+      - task8
+
+networks:
+  task8:
+
+volumes:
+  postgres-volume:
