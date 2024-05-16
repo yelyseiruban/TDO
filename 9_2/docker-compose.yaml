@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  todo-db:
+    image: diamol/postgres:11.5
+    ports:
+      - "5433:5433"
+    volumes:
+      - todo-db-data:/var/lib/postgresql/data
+  todo-app:
+    image: diamol/ch06-todo-list
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - todo-db
+
+volumes:
+  todo-db-data:
