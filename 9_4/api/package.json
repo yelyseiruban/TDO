@@ -1,0 +1,11 @@
+{
+  "name": "express-api",
+  "version": "1.0.0",
+  "description": "Simple Express API for adding and retrieving messages from Redis and adding users to PostgreSQL",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "redis": "^3.0.2",
+    "pg": "^8.6.0"
+  }
+}
